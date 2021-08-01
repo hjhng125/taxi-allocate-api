@@ -25,7 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Getter
 @Builder
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PACKAGE)
 public class Member extends BaseEntity implements UserDetails {

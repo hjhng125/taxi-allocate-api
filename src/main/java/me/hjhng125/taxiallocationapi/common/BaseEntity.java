@@ -1,21 +1,25 @@
 package me.hjhng125.taxiallocationapi.common;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import lombok.ToString;
+import lombok.Getter;
 
+@Getter
 @MappedSuperclass
-@ToString(callSuper = true)
 public abstract class BaseEntity {
 
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
-        createdAt = LocalDateTime.now();
+        createdAt = updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
