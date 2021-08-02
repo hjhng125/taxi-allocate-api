@@ -94,6 +94,7 @@ class TaxiRequestControllerTest {
     }
 
     @Test
+    @Transactional
     void create_request_test() throws Exception {
 
         Member member = Member.builder()
@@ -103,12 +104,13 @@ class TaxiRequestControllerTest {
             .build();
         memberRepository.save(member);
         String address = "캘리포니아 어딘가";
+        String content = objectMapper.writeValueAsString(TaxiRequestCreateDTO.builder().address(address).build());
         String token = provider.createToken(member.getEmail());
 
         mockMvc.perform(post("/taxi-requests")
             .header("Authorization", "Token " + token)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(address))
+            .content(content))
             .andDo(print())
             .andExpect(header().exists(HttpHeaders.LOCATION))
             .andExpect(status().isCreated())
@@ -118,6 +120,69 @@ class TaxiRequestControllerTest {
             .andExpect(jsonPath("passengerId").exists())
             .andExpect(jsonPath("status").value(TaxiRequestStatus.STANDBY.name()))
             .andExpect(jsonPath("acceptedAt").doesNotExist())
+            .andExpect(jsonPath("createdAt").exists())
+            .andExpect(jsonPath("updatedAt").exists())
+        ;
+
+    }
+
+    @Test
+    @Transactional
+    void create_request_no_address_test() throws Exception {
+
+        Member member = Member.builder()
+            .email("hjhng125@nate.com")
+            .password("pass")
+            .memberType(MemberType.PASSENGER)
+            .build();
+        memberRepository.save(member);
+        String content = objectMapper.writeValueAsString(TaxiRequestCreateDTO.builder().build());
+        String token = provider.createToken(member.getEmail());
+
+        mockMvc.perform(post("/taxi-requests")
+            .header("Authorization", "Token " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("message").exists())
+            .andExpect(jsonPath("message").value(UserGuideMessage.REQUIRED_ADDRESS.getUserGuideMessage()))
+        ;
+    }
+
+    @Test
+    @Transactional
+    void accept_request_no_address_test() throws Exception {
+        Member passenger = Member.builder()
+            .email("hjhng125@nate.com")
+            .password("pass")
+            .memberType(MemberType.PASSENGER)
+            .build();
+        memberRepository.save(passenger);
+        Member driver = Member.builder()
+            .email("hjhng125@gmail.com")
+            .password("pass")
+            .memberType(MemberType.DRIVER)
+            .build();
+        memberRepository.save(driver);
+        TaxiRequest request = taxiRequestRepository.save(TaxiRequest.builder()
+            .passenger(passenger)
+            .address("어디서탈까")
+            .build());
+
+        String token = provider.createToken(driver.getEmail());
+
+        mockMvc.perform(post("/taxi-requests/" + request.getId() + "/accept")
+            .header("Authorization", "Token " + token))
+            .andDo(print())
+            .andExpect(header().exists(HttpHeaders.LOCATION))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("id").exists())
+            .andExpect(jsonPath("address").exists())
+            .andExpect(jsonPath("driverId").exists())
+            .andExpect(jsonPath("passengerId").exists())
+            .andExpect(jsonPath("status").value(TaxiRequestStatus.ACCEPTED.name()))
+            .andExpect(jsonPath("acceptedAt").exists())
             .andExpect(jsonPath("createdAt").exists())
             .andExpect(jsonPath("updatedAt").exists())
         ;

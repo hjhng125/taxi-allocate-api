@@ -6,10 +6,8 @@ import static lombok.AccessLevel.PACKAGE;
 import static lombok.AccessLevel.PROTECTED;
 
 import java.time.LocalDateTime;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,7 +20,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import me.hjhng125.taxiallocationapi.common.BaseEntity;
 import me.hjhng125.taxiallocationapi.member.Member;
-import org.springframework.stereotype.Component;
 
 @Entity
 @Getter

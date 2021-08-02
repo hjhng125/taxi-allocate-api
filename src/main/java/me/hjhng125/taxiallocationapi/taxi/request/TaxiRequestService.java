@@ -17,14 +17,22 @@ public class TaxiRequestService {
         return taxiRequests.selectTaxiRequest(member, pageable);
     }
 
-    public TaxiRequestDTO createRequest(Member member, String address) {
+    public TaxiRequestDTO createRequest(Member member, TaxiRequestCreateDTO createDTO) {
 
-        validator.validateCreateRequest(member, address);
+        validator.validateCreateRequest(member, createDTO);
         TaxiRequest save = taxiRequests.save(TaxiRequest.builder()
             .passenger(member)
-            .address(address)
+            .address(createDTO.getAddress())
             .build());
 
         return save.toDTO();
+    }
+
+    public TaxiRequestDTO acceptRequest(Member member, TaxiRequest taxiRequest) {
+
+        validator.validateAcceptRequest(member, taxiRequest);
+
+        taxiRequest.acceptByDriver(member);
+        return taxiRequest.toDTO();
     }
 }

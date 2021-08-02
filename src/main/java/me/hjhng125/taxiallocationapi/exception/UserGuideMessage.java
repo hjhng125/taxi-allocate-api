@@ -21,8 +21,14 @@ public enum UserGuideMessage {
     REQUIRED_LOGIN(LogLevel.ERROR, "로그인이 필요합니다"),
 
     IMPOSSIBLE_DRIVER_CREATE_TAXI_REQUEST(LogLevel.ERROR, "승객만 배차 요청할 수 있습니다"),
+    REQUIRED_ADDRESS(LogLevel.ERROR, "주소를 입력해주세요"),
     INVALID_ADDRESS_LENGTH(LogLevel.ERROR, "주소는 100자 이하로 입력해주세요"),
-    ALREADY_EXISTS_REQUEST(LogLevel.ERROR, "아직 대기중인 배차 요청이 있습니다")
+    ALREADY_EXISTS_REQUEST(LogLevel.ERROR, "아직 대기중인 배차 요청이 있습니다"),
+
+    IMPOSSIBLE_PASSENGER_ACCEPT_REQUEST(LogLevel.ERROR, "기사만 배차 요청을 수락할 수 있습니다"),
+    TAXI_REQUEST_NOT_FOUND(LogLevel.ERROR, "존재하지 않는 배차 요청입니다"),
+    ALREADY_ACCEPT_REQUEST(LogLevel.ERROR, "수락할 수 없는 배차 요청입니다. 다른 배차 요청을 선택하세요")
+
     ;
 
     private final LogLevel logLevel;

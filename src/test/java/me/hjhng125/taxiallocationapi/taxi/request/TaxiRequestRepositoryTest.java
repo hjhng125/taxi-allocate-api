@@ -1,19 +1,14 @@
 package me.hjhng125.taxiallocationapi.taxi.request;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import me.hjhng125.taxiallocationapi.config.QuerydslConfig;
 import me.hjhng125.taxiallocationapi.member.Member;
 import me.hjhng125.taxiallocationapi.member.MemberType;
-import net.bytebuddy.asm.Advice.Argument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
@@ -71,7 +66,7 @@ class TaxiRequestRepositoryTest {
 
         assertThat(taxiRequestDTOS.getContent().size()).isEqualTo(1);
         assertThat(taxiRequestDTOS).extracting("address").containsExactly("경기도 성남시");
-        assertThat(taxiRequestDTOS).extracting("passengerId").containsExactly(1L);
+        assertThat(taxiRequestDTOS).extracting("passengerId").containsExactly(member1.getId());
     }
 
     @Test
