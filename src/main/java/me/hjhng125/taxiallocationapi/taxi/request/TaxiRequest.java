@@ -60,7 +60,7 @@ public class TaxiRequest extends BaseEntity {
         return TaxiRequestDTO.builder()
             .id(id)
             .address(address)
-            .driverId(driver.getId())
+            .driverId(driver != null ? driver.getId() : null)
             .passengerId(passenger.getId())
             .status(status)
             .acceptedAt(acceptedAt)

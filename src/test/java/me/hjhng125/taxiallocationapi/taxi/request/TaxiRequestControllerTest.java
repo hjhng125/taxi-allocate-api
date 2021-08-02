@@ -1,10 +1,13 @@
 package me.hjhng125.taxiallocationapi.taxi.request;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import me.hjhng125.taxiallocationapi.exception.UserGuideMessage;
 import me.hjhng125.taxiallocationapi.member.Member;
 import me.hjhng125.taxiallocationapi.member.MemberRepository;
@@ -14,6 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +34,12 @@ class TaxiRequestControllerTest {
 
     @Autowired
     MemberRepository memberRepository;
+
     @Autowired
     TaxiRequestRepository taxiRequestRepository;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     void taxi_request_unAuthorized_test() throws Exception {
@@ -45,7 +54,7 @@ class TaxiRequestControllerTest {
         String token = provider.createToken("hjhng125@nate.com");
 
         mockMvc.perform(get("/taxi-requests")
-        .header("Authorization", "Bearer " + token))
+            .header("Authorization", "Bearer " + token))
             .andDo(print())
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("message").value(UserGuideMessage.REQUIRED_LOGIN.getUserGuideMessage()));
@@ -81,6 +90,36 @@ class TaxiRequestControllerTest {
             .andExpect(jsonPath("content[0].createdAt").exists())
             .andExpect(jsonPath("content[0].updatedAt").exists())
             .andExpect(jsonPath("pageable").exists())
+        ;
+    }
+
+    @Test
+    void create_request_test() throws Exception {
+
+        Member member = Member.builder()
+            .email("hjhng125@nate.com")
+            .password("pass")
+            .memberType(MemberType.PASSENGER)
+            .build();
+        memberRepository.save(member);
+        String address = "캘리포니아 어딘가";
+        String token = provider.createToken(member.getEmail());
+
+        mockMvc.perform(post("/taxi-requests")
+            .header("Authorization", "Token " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(address))
+            .andDo(print())
+            .andExpect(header().exists(HttpHeaders.LOCATION))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("id").exists())
+            .andExpect(jsonPath("address").exists())
+            .andExpect(jsonPath("driverId").doesNotExist())
+            .andExpect(jsonPath("passengerId").exists())
+            .andExpect(jsonPath("status").value(TaxiRequestStatus.STANDBY.name()))
+            .andExpect(jsonPath("acceptedAt").doesNotExist())
+            .andExpect(jsonPath("createdAt").exists())
+            .andExpect(jsonPath("updatedAt").exists())
         ;
     }
 }
