@@ -62,4 +62,35 @@ class MemberServiceTest {
         assertThat(userGuideException.getMessage()).isEqualTo(UserGuideMessage.ALREADY_EXIST_MEMBER.getUserGuideMessage());
     }
 
+    @Test
+    void match_by_login_info_invalid_email_test() {
+        MemberLoginRequestDTO requestDTO = MemberLoginRequestDTO.builder()
+            .email(email)
+            .build();
+
+        when(members.findByEmail(requestDTO.getEmail())).thenReturn(Optional.empty());
+
+        UserGuideException userGuideException = assertThrows(UserGuideException.class, () -> memberService.matchByLoginInfo(requestDTO));
+        assertThat(userGuideException.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void match_by_login_info_invalid_password_test() {
+        String pass = "pass";
+        MemberLoginRequestDTO requestDTO = MemberLoginRequestDTO.builder()
+            .email(email)
+            .password(pass)
+            .build();
+
+        Member saved = Member.builder()
+            .email(email)
+            .password(pass)
+            .build();
+
+        when(members.findByEmail(requestDTO.getEmail())).thenReturn(Optional.of(saved));
+        when(passwordEncoder.matches(pass, saved.getPassword())).thenReturn(false);
+
+        UserGuideException userGuideException = assertThrows(UserGuideException.class, () -> memberService.matchByLoginInfo(requestDTO));
+        assertThat(userGuideException.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }

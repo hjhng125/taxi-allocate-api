@@ -49,4 +49,18 @@ public class MemberService implements UserDetailsService {
             .updatedAt(savedMember.getUpdatedAt())
             .build();
     }
+
+    public Member matchByLoginInfo(MemberLoginRequestDTO loginRequestDTO) {
+        Member member = members.findByEmail(loginRequestDTO.getEmail())
+            .orElseThrow(() -> new UserGuideException(HttpStatus.BAD_REQUEST, UserGuideMessage.INVALID_LOGIN_INFO));
+
+        if (isNonMatchPassword(loginRequestDTO.getPassword(), member.getPassword())) {
+            throw new UserGuideException(HttpStatus.BAD_REQUEST, UserGuideMessage.INVALID_LOGIN_INFO);
+        }
+        return member;
+    }
+
+    private boolean isNonMatchPassword(String loginPassword, String savedPassword) {
+        return !passwordEncoder.matches(loginPassword, savedPassword);
+    }
 }
