@@ -19,6 +19,34 @@ public class JwtTokenProvider {
     private String secretKey;
 
     static final long tokenValidTime = 60 * 60 * 1000L;
+    static final String AUTHORIZATION_HEADER = "Authorization";
+    static final String TOKEN_PREFIX = "Token ";
+    static final int SUBSTRING_TOKEN = 6;
+
+    public String resolveToken(HttpServletRequest request) {
+        String header = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(header) && header.startsWith(TOKEN_PREFIX)) {
+            return header.substring(SUBSTRING_TOKEN);
+        }
+        return null;
+    }
+
+    public String getEmailFromToken(String token) {
+        return this.getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        return this.getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    private <T> T getClaimFromToken(String jwtToken, Function<Claims, T> claimsResolver) {
+        Claims claims = this.getClaimsFromToken(jwtToken);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims getClaimsFromToken(String jwtToken) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken).getBody();
+    }
 
     public String createToken(String username) {
         return Jwts.builder()
@@ -30,4 +58,12 @@ public class JwtTokenProvider {
             .compact();
     }
 
+    public boolean validateToken(String jwtToken) {
+        return !this.isTokenExpired(jwtToken);
+    }
+
+    private Boolean isTokenExpired(String token) {
+        final Date expiration = this.getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
 }

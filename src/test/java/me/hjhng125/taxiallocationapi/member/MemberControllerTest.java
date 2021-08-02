@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -69,6 +70,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @Transactional
     void member_sign_up_test() throws Exception {
         String userType = MemberType.PASSENGER.getTitle();
 
@@ -135,6 +137,7 @@ class MemberControllerTest {
     }
 
     @Test
+    @Transactional
     void member_sign_in_success_test() throws Exception {
 
         service.save(MemberCreateRequestDTO.builder()
