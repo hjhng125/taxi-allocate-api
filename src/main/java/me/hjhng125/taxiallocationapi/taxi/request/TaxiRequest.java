@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -37,7 +38,7 @@ public class TaxiRequest extends BaseEntity {
     @Column(length = 100)
     private String address;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member driver;
 
     @ManyToOne(optional = false)
@@ -53,5 +54,18 @@ public class TaxiRequest extends BaseEntity {
         this.driver = driver;
         this.status = TaxiRequestStatus.ACCEPTED;
         this.acceptedAt = LocalDateTime.now();
+    }
+
+    public TaxiRequestDTO toDTO() {
+        return TaxiRequestDTO.builder()
+            .id(id)
+            .address(address)
+            .driverId(driver.getId())
+            .passengerId(passenger.getId())
+            .status(status)
+            .acceptedAt(acceptedAt)
+            .createdAt(getCreatedAt())
+            .updatedAt(getUpdatedAt())
+            .build();
     }
 }

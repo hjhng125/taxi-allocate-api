@@ -6,8 +6,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 @MappedSuperclass
 public abstract class BaseEntity {
 

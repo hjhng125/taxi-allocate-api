@@ -38,6 +38,21 @@ class MemberServiceTest {
     }
 
     @Test
+    void successfully_save_test() {
+        MemberCreateRequestDTO build = MemberCreateRequestDTO.builder()
+            .email(email)
+            .password("pass")
+            .build();
+
+        when(members.findByEmail(build.getEmail())).thenReturn(Optional.empty());
+        when(passwordEncoder.encode(build.getPassword())).thenReturn("askldjfhaskjdfh");
+
+        MemberCreateResponseDTO save = memberService.save(build);
+        assertThat(save).isNotNull();
+        assertThat(save.getEmail()).isEqualTo(email);
+    }
+
+    @Test
     void loadUserByUsername_not_exists_user_test() {
         when(members.findByEmail(email)).thenReturn(Optional.empty());
 

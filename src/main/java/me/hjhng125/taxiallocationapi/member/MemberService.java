@@ -41,13 +41,7 @@ public class MemberService implements UserDetailsService {
             .memberType(MemberType.getMemberType(createDTO.getUserType()))
             .build());
 
-        return MemberCreateResponseDTO.builder()
-            .id(savedMember.getId())
-            .email(savedMember.getEmail())
-            .userType(savedMember.getMemberType().getTitle())
-            .createdAt(savedMember.getCreatedAt())
-            .updatedAt(savedMember.getUpdatedAt())
-            .build();
+        return MemberCreateResponseDTO.mapFrom(savedMember);
     }
 
     public Member matchByLoginInfo(MemberLoginRequestDTO loginRequestDTO) {

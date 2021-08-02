@@ -19,6 +19,10 @@ public enum UserGuideMessage {
     INVALID_LOGIN_INFO(LogLevel.ERROR, "아이디와 비밀번호를 확인해주세요"),
 
     REQUIRED_LOGIN(LogLevel.ERROR, "로그인이 필요합니다"),
+
+    IMPOSSIBLE_DRIVER_CREATE_TAXI_REQUEST(LogLevel.ERROR, "승객만 배차 요청할 수 있습니다"),
+    INVALID_ADDRESS_LENGTH(LogLevel.ERROR, "주소는 100자 이하로 입력해주세요"),
+    ALREADY_EXISTS_REQUEST(LogLevel.ERROR, "아직 대기중인 배차 요청이 있습니다")
     ;
 
     private final LogLevel logLevel;

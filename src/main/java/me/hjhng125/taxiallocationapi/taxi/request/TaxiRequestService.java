@@ -11,8 +11,20 @@ import org.springframework.stereotype.Service;
 public class TaxiRequestService {
 
     private final TaxiRequestRepository taxiRequests;
+    private final TaxiRequestValidator validator;
 
     public Page<TaxiRequestDTO> requests(Member member, Pageable pageable) {
         return taxiRequests.selectTaxiRequest(member, pageable);
+    }
+
+    public TaxiRequestDTO createRequest(Member member, String address) {
+
+        validator.validateCreateRequest(member, address);
+        TaxiRequest save = taxiRequests.save(TaxiRequest.builder()
+            .passenger(member)
+            .address(address)
+            .build());
+
+        return save.toDTO();
     }
 }
