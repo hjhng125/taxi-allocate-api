@@ -11,6 +11,9 @@ services:
       - MYSQL_PASSWORD=pass
     volumes:
       - ./init/:/docker-entrypoint-initdb.d/
+    command:
+      - --character-set-server=utf8
+      - --collation-server=utf8_unicode_ci
     ports:
       - 3306:3306
   api:
