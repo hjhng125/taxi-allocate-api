@@ -7,7 +7,7 @@
 * dababase : mysql
 * test : Junit5
 
-## 초기 설정
+## 실행 환경 설정
 
 ### docker 설치
 * [docker 공식 홈페이지](https://www.docker.com/)
