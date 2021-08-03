@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  taxidb:
+    image: mysql:5.7
+    container_name: taxi-db
+    environment:
+      - MYSQL_DATABASE=taxi
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+    volumes:
+      - ./init/:/docker-entrypoint-initdb.d/
+    ports:
+      - 3306:3306
+  api:
+    container_name: taxi-allocation-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    links:
+      - taxidb
+    depends_on:
+      - taxidb
