@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:mysql://taxidb:3306/taxi?autoReconnect=true&useSSL=true
+    username: user
+    password: pass
+
+secret:
+  key: hjhng125
+
+logging:
+  level:
+    org.springframework.security: DEBUG
